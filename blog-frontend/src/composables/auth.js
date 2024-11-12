@@ -99,11 +99,43 @@ return {
           }
 
     }
+
+    const register = async (name,email,password,password_confirmation) => {
+
+      const param={
+          name,
+          email,
+          password,
+          password_confirmation
+      }
+      //console.log();
+      try {
+      let res = await axios.post(`${authStore.baseURL}/register`,param)
+      console.log(res)
+      if (res.data.access_token) {
+      const { access_token, user } = res.data;
+      
+      authStore.setAuthData(user, access_token);
+      //console.log(authStore.token);
+      await router.push({name: 'posts.index'});
+      //console.clear();
+      }
+      else if (res.data.error) {
+          // Handle invalid credentials case
+          alert(res.data.error);
+        }
+      }
+      catch (error) {
+          console.error("Register error:", error);
+          alert("An error occurred. Please try again.");
+        }
+
+  }
     
 
     
 
     return {
-        login,getprofile,profile_update
+        login,getprofile,profile_update,register
       };
 }
