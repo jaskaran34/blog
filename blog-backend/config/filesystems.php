@@ -36,6 +36,12 @@ return [
             'serve' => true,
             'throw' => false,
         ],
+        'mydrive' => [
+            'driver' => 'local',
+            'root' => storage_path('images'),
+            'serve' => true,
+            'throw' => false,
+        ],
 
         'public' => [
             'driver' => 'local',

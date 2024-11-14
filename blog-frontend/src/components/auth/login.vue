@@ -43,6 +43,7 @@ const handleSubmit = () => {
           Login
         </button>
       </form>
+      <p>New User <RouterLink :to="{name:'register'}" ><button class=" px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Sign up</button></RouterLink></p>
     </div>
   </div>
 </template>

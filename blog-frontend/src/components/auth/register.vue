@@ -69,9 +69,11 @@ const handleSubmit = () => {
           type="submit"
           class="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
-          Login
+          Register
         </button>
+
       </form>
+      <p>Already Have an account.  <RouterLink :to="{name:'login'}" ><button class=" px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Login</button></RouterLink></p>
     </div>
   </div>
 </template>
