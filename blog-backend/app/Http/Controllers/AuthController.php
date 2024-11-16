@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers;
 
+
+
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateUserRequest;
 use \App\Models\User;
 use Illuminate\Support\Facades\File;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Response;
+
+use Intervention\Image\ImageManagerStatic as Image;
 use \App\Models\Profile;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use \App\http\Resources\UserResource;
 use Illuminate\Support\Facades\Log;
+
 
 class AuthController extends Controller
 {
@@ -34,9 +39,20 @@ class AuthController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        $image = $request->file('image'); 
-        $imageName = time().'.'.$image->getClientOriginalExtension(); 
-        $image->storeAs('profile', $imageName, 'mydrive');
+        $file = $request->file('image'); 
+        $image = Image::make($file->getRealPath());
+
+        
+        $image->resize(300, 300, function ($constraint) {
+            $constraint->aspectRatio(); // Maintain the aspect ratio
+            $constraint->upsize();      // Prevent resizing larger images
+        });
+
+        $image->encode('jpg', 95); 
+
+        $file_path='images/profile/' . time().$file->getClientOriginalName();
+        $compressedPath = storage_path($file_path);
+        $image->save($compressedPath);
 
         
 
@@ -49,7 +65,7 @@ class AuthController extends Controller
 
         Profile::create([
             'user_id'=>$user->id,
-            'path'=> $imageName
+            'path'=> $file_path
         ]);
 
 
@@ -59,12 +75,15 @@ class AuthController extends Controller
         $token = $user->createToken('Api token of '.$user->name)->plainTextToken;
         //$token = $user->createToken('auth_token')->plainTextToken;
 
-    
-    
+       
+
+        $imageData = base64_encode(file_get_contents($compressedPath));
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => new UserResource($user)
+            'user' => new UserResource($user),
+            'image' => $imageData
         ], 201);
 
     
