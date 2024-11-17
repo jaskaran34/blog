@@ -23,10 +23,18 @@ export default function login_code(){
        Authorization: `Bearer ${authStore.token}`
      }
    });
+
+        
+        
+
+   let profile_picture="data:image/jpg;base64,"+ res.data.image;
+   
+   
   return {
-    id:res.data.data.id,
-    name:res.data.data.name,
-    email:res.data.data.email,
+    id:res.data.user.id,
+    name:res.data.user.name,
+    email:res.data.user.email,
+    image:profile_picture,
   }
    
  }
@@ -36,27 +44,30 @@ export default function login_code(){
 
     }
   }
-  const profile_update= async(name)=>{
+  const profile_update= async(formData)=>{
 
     try{
-      // console.log(`Bearer ${authStore.token}`);
-   let res = await axios.patch(`${authStore.baseURL}/profile/update`,{
-    name
-   },{
+      console.clear();
+     console.log(formData);
+   let res = await axios.post(`${authStore.baseURL}/profile/update`,formData,{
    headers: {
      Authorization: `Bearer ${authStore.token}`
    }
  });
+ console.log(res);
  const $toast = useToast();
                 $toast.success('Profile Updated', {
                 position: 'bottom-right',
                     duration: 5000
                 });
-                
+                let profile_picture="data:image/jpg;base64,"+ res.data.image;
+                authStore.setAuthData(res.data.user, authStore.token,profile_picture);            
 return {
-  id:res.data.data.id,
-  name:res.data.data.name,
-  email:res.data.data.email,
+
+  id:res.data.user.id,
+    name:res.data.user.name,
+    email:res.data.user.email,
+    image:profile_picture,
 }
 
                 
@@ -81,9 +92,10 @@ return {
         let res = await axios.post(`${authStore.baseURL}/login`,param)
         
         if (res.data.access_token) {
-        const { access_token, user } = res.data;
+        const { access_token, user,image } = res.data;
+        let profile_picture="data:image/jpg;base64,"+ image;
         
-        authStore.setAuthData(user, access_token);
+        authStore.setAuthData(user, access_token,profile_picture);
         //console.log(authStore.token);
         await router.push({name: 'posts.index'});
         //console.clear();
@@ -100,22 +112,17 @@ return {
 
     }
 
-    const register = async (name,email,password,password_confirmation) => {
+    const register = async (formData) => {
 
-      const param={
-          name,
-          email,
-          password,
-          password_confirmation
-      }
+     
       //console.log();
       try {
-      let res = await axios.post(`${authStore.baseURL}/register`,param)
-      console.log(res)
+      let res = await axios.post(`${authStore.baseURL}/register`,formData)
+      //console.log(res); 
       if (res.data.access_token) {
-      const { access_token, user } = res.data;
-      
-      authStore.setAuthData(user, access_token);
+      const { access_token, user,image } = res.data;
+      let profile_picture="data:image/jpg;base64,"+ image;
+      authStore.setAuthData(user, access_token,profile_picture);
       //console.log(authStore.token);
       await router.push({name: 'posts.index'});
       //console.clear();

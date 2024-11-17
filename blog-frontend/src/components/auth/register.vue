@@ -10,9 +10,21 @@ const name=ref('jaskaran');
 const email=ref(formattedEmail);
 const password=ref('Guest@1234');
 const password_confirmation=ref('Guest@1234');
+const image = ref(null);
+const handleFileUpload = (event) => {
+   image.value = event.target.files[0];
+  };
 
-const handleSubmit = () => {
-    register(name.value,email.value,password.value,password_confirmation.value);
+const handleSubmit = async() => {
+
+const formData = new FormData(); 
+formData.append('name', name.value);
+formData.append('email', email.value);
+formData.append('password', password.value);
+formData.append('password_confirmation', password_confirmation.value); 
+formData.append('image', image.value); 
+await register(formData);
+    //register(name.value,email.value,password.value,password_confirmation.value);
 };
 </script>
 <template>
@@ -64,7 +76,13 @@ const handleSubmit = () => {
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
-        
+
+        <div class="space-y-2"> 
+          <label for="image" class="text-sm font-medium text-gray-700">Profile Picture</label>
+           <input type="file" id="image" @change="handleFileUpload" required 
+           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" /> </div>
+
+  
         <button
           type="submit"
           class="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"

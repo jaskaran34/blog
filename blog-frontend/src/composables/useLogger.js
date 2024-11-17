@@ -17,6 +17,7 @@ export function useLogger() {
     () => {
       console.log('Token (route change):', authStore.token); // Log token when route changes
       console.log('User (route change):', authStore.user);   // Log user when route changes
+      //console.log('image:', authStore.profile);
     },
     { immediate: false } // Don't execute immediately on first run; only on route change
   );

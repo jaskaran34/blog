@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import login_code from '@/composables/auth.js';
 const { login } = login_code();
 //gtest@gmail.com&password=Guest@1234
-const email=ref('gtest@gmail.com');
+const email=ref('test591@gmail.com');
 const password=ref('Guest@1234');
 const handleSubmit = () => {
     login(email.value,password.value);

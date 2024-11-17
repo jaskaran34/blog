@@ -24,8 +24,19 @@ class AuthController extends Controller
    
     public function profile(){
         $user_id = Auth::user()->id;
+        
         $user = User::findOrFail($user_id);
-        return new UserResource($user);
+        
+        $path=storage_path($user->profile->path);
+        $imageData = base64_encode(file_get_contents($path));
+
+       // return new UserResource($user);
+
+       return response()->json([
+        'user' => new UserResource($user),
+        'image' => $imageData
+    ], 201);
+
     }
     public function register(Request $request)
     {
@@ -103,6 +114,9 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
+        $path=storage_path($user->profile->path);
+        $imageData = base64_encode(file_get_contents($path));
+
         //return gettype($user);
 
        // $user->tokens()->delete();
@@ -114,7 +128,8 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => new UserResource($user)
+            'user' => new UserResource($user),
+            'image'=> $imageData
         ]);
     }
 
@@ -130,7 +145,159 @@ class AuthController extends Controller
         
     }
 
-    function profile_update(UpdateUserRequest $request){
+    function profile_update_new(Request $request){
+        $user_id = Auth::user()->id;
+        $user = User::findOrFail($user_id);
+
+        if($request->name){
+
+            $data = $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
+
+        $user->name = $request->name;
+        $user->save();
+        }
+
+        if($request->file('image')){
+
+
+            $data_val = $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ]);
+
+            
+            $file = $request->file('image'); 
+            $image = Image::make($file->getRealPath());
+
+        
+            $image->resize(300, 300, function ($constraint) {
+                $constraint->aspectRatio(); // Maintain the aspect ratio
+                $constraint->upsize();      // Prevent resizing larger images
+            });
+
+        $image->encode('jpg', 95); 
+
+        $file_path='images/profile/' . time().$file->getClientOriginalName();
+        $compressedPath = storage_path($file_path);
+        $image->save($compressedPath);
+      
+        $profile = Profile::where('user_id', $user->id)->firstOrFail();
+        
+        $profile->path=$file_path;
+        $profile->save();
+      
+       
+    }
+
+        $path=storage_path($user->profile->path);
+        $imageData = base64_encode(file_get_contents($path));
+
+       // return new UserResource($user);
+
+       return response()->json([
+        'user' => new UserResource($user),
+        'image' => $imageData
+    ], 201);
+    }
+    function profile_update(Request $request){
+        
+       return $request->all();
+       //, $request->all()
+        $user_id = Auth::user()->id;
+        $user = User::findOrFail($user_id);
+
+        if($request->name){
+
+            $data = $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
+
+        $user->name = $request->name;
+        $user->save();
+        }
+
+        if($request->file('image')){
+
+            $data_val = $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ]);
+
+            return "hello";
+
+         
+        }
+        $path=storage_path($user->profile->path);
+        $imageData = base64_encode(file_get_contents($path));
+
+       // return new UserResource($user);
+
+       return response()->json([
+        'user' => new UserResource($user),
+        'image' => $imageData
+    ], 201);
+        /*
+
+    function profile_update(){
+
+        
+        //$user_id = Auth::user()->id;
+        
+        return "cdc";
+        //$user = User::findOrFail($user_id);
+        /*
+        if($request->name){
+
+            $data = $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
+
+        $user->name = $request->name;
+        $user->save();
+        }
+
+        if($request->file('image')){
+
+            $data_val = $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ]);
+
+
+            $file = $request->file('image'); 
+            $image = Image::make($file->getRealPath());
+
+        
+            $image->resize(300, 300, function ($constraint) {
+                $constraint->aspectRatio(); // Maintain the aspect ratio
+                $constraint->upsize();      // Prevent resizing larger images
+            });
+
+        $image->encode('jpg', 95); 
+
+        $file_path='images/profile/' . time().$file->getClientOriginalName();
+        $compressedPath = storage_path($file_path);
+        $image->save($compressedPath);
+
+        $profile = Profile::where('user_id',$user->id)->findOrFail($user_id);
+        $profile->path=$file_path;
+        $profile->save();
+       
+       
+    }
+
+    $path=storage_path($user->profile->path);
+    $imageData = base64_encode(file_get_contents($path));
+
+       // return new UserResource($user);
+
+       return response()->json([
+        'user' => new UserResource($user),
+        'image' => $imageData
+    ], 201);     
+        
+        
+    }
+        */
         
         $user_id = Auth::user()->id;
         $user = User::findOrFail($user_id);
