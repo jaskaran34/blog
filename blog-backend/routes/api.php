@@ -20,6 +20,7 @@ Route::patch('/posts/{id}', [PostController::class, 'update'])->middleware(\App\
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/sso/{id}',[AuthController::class,'sso']);
 Route::get('/profile', [AuthController::class, 'profile'])->middleware('auth:sanctum');
 //Route::patch('/profile/update', [AuthController::class, 'profile_update'])->middleware('auth:sanctum');
 Route::post('/profile/update', [AuthController::class, 'profile_update_new'])->middleware('auth:sanctum');

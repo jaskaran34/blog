@@ -44,6 +44,7 @@ const handleSubmit = () => {
         </button>
       </form>
       <p>New User <RouterLink :to="{name:'register'}" ><button class=" px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Sign up</button></RouterLink></p>
+    <a href="http://127.0.0.1:8000/login/google" style="color: blue;text-decoration: underline;font-weight: bold;color: blue;">Login with Google</a>
     </div>
   </div>
 </template>

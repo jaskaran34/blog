@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateUserRequest;
 use \App\Models\User;
+use App\Models\SocialAccount;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 
@@ -27,13 +28,28 @@ class AuthController extends Controller
         
         $user = User::findOrFail($user_id);
         
-        $path=storage_path($user->profile->path);
-        $imageData = base64_encode(file_get_contents($path));
+        $social=SocialAccount::where('user_id',$user->id)->first();
+
+        if($social){
+            
+            $imageData = base64_encode(file_get_contents($social->avatar));
+            $check="1";
+            
+        }
+        else{
+            $path=storage_path($user->profile->path);
+            $imageData = base64_encode(file_get_contents($path));
+            $check="0";
+        }
+        
+
+        
 
        // return new UserResource($user);
 
        return response()->json([
         'user' => new UserResource($user),
+        'check' => $check,
         'image' => $imageData
     ], 201);
 
@@ -99,6 +115,22 @@ class AuthController extends Controller
 
     
     }
+    public function sso($id){
+        
+        $social= SocialAccount::where('provider_user_id',$id)->firstOrFail();
+        $user=User::findorFail($social->user_id);
+        
+        $token = $user->createToken('Api token of '.$user->name)->plainTextToken;
+        
+        $imageData = base64_encode(file_get_contents($social->avatar));
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => new UserResource($user),
+            'image' => $imageData
+        ], 201);
+       }
 
     // Login method
     public function login(Request $request)

@@ -6,6 +6,8 @@ import Login from '@/components/auth/login.vue'
 import Logout from '@/components/auth/logout.vue'
 import Profile from '@/components/auth/profile.vue'
 import register from '@/components/auth/register.vue'
+import signin from '@/components/auth/signin.vue'
+import HandleData from '@/components/HandleData.vue'
 
 
 
@@ -30,7 +32,11 @@ import { useAuthStore } from '@/store/authStore';
       }
       ,
       {  path:'/register',name:'register',component:register
+      },
+      {  path:'/signin',name:'signin',component:signin
       }
+      , { path: '/handle-data', name: 'handle.data', component: HandleData }
+      
  ];
 
  const router = createRouter({

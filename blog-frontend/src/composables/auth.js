@@ -24,7 +24,7 @@ export default function login_code(){
      }
    });
 
-        
+        console.log(res.data);
         
 
    let profile_picture="data:image/jpg;base64,"+ res.data.image;
@@ -35,6 +35,8 @@ export default function login_code(){
     name:res.data.user.name,
     email:res.data.user.email,
     image:profile_picture,
+    check:res.data.check,
+    
   }
    
  }
@@ -78,6 +80,34 @@ return {
      
 
   }
+
+}
+
+const sso = async(id)=> {
+  console.log(id);
+
+  try {
+    let res = await axios.get(`${authStore.baseURL}/sso/${id}`)
+    console.log(res);
+    if (res.data.access_token) {
+    const { access_token, user,image } = res.data;
+    let profile_picture="data:image/jpg;base64,"+ image;
+    
+    authStore.setAuthData(user, access_token,profile_picture);
+    //console.log(authStore.token);
+    await router.push({name: 'posts.index'});
+    //console.clear();
+    }
+    else if (res.data.error) {
+        // Handle invalid credentials case
+        alert(res.data.error);
+      }
+    }
+    catch (error) {
+        console.error("Login error:", error);
+        alert("An error occurred. Please try again.");
+      }
+
 
 }
 
@@ -143,6 +173,6 @@ return {
     
 
     return {
-        login,getprofile,profile_update,register
+        login,getprofile,profile_update,register,sso
       };
 }

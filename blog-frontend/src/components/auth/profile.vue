@@ -24,6 +24,7 @@ const user = ref({
     name:null,
     email:null,
     image:null,
+    check:null,
     update_img:null
 });
 
@@ -43,6 +44,8 @@ onMounted(async ()=>{
     user.value.name=myPromise.name;
     user.value.email=myPromise.email;
     user.value.image=myPromise.image;
+    user.value.check=myPromise.check;
+    console.log(user)
 });
 
 </script>
@@ -111,7 +114,7 @@ onMounted(async ()=>{
         <div>
           <div class="mt-1">
             
-            <button type="button" @click="call_update()" class="bg-green-500 text-white font-bold rounded px-4 py-2 hover:bg-green-700">Update</button>
+            <button v-if="user.check==0" type="button" @click="call_update()" class="bg-green-500 text-white font-bold rounded px-4 py-2 hover:bg-green-700">Update</button>
           </div>
         </div>
 
